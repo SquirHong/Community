@@ -1,0 +1,58 @@
+package com.hjs.community.util;
+
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
+import org.springframework.util.DigestUtils;
+
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+/**
+ * @author hong
+ * @create 2023-01-01 17:03
+ */
+public class CommunityUtil {
+
+    // 生成随机字符串
+    public static String generateUUID(){
+        return UUID.randomUUID().toString().replaceAll("-","");
+    }
+
+    /**
+     * 原始密码 ＋ salt 再md5加密   使用salt是为了加强安全性
+     * @param key
+     * @return
+     */
+    public static String md5(String key){
+        if (StringUtils.isBlank(key)){
+            return null;
+        }
+        return DigestUtils.md5DigestAsHex(key.getBytes());
+    }
+
+    public static String getJsonString(int code, String msg, Map<String,Object> map){
+        JSONObject json = new JSONObject();
+        json.put("code",code);
+        json.put("msg",msg);
+        if (map != null){
+            // TODO: 2023/1/3 这里可优化map的遍历方式
+            for (String key : map.keySet()){
+                json.put(key,map.get(key));
+            }
+        }
+        return json.toJSONString();
+    }
+    public static String getJsonString(int code,String msg){
+        return getJsonString(code,msg,null);
+    }
+    public static String getJsonString(int code){
+        return getJsonString(code,null,null);
+    }
+    public static String getRandomName(){
+        return RandomStringUtils.random(7,"qwertyuiopasdfghjklzxcvbnm");
+    }
+
+}

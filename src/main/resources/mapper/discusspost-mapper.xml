@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hjs.community.dao.DiscussPostMapper">
+
+    <sql id="selectFileds">
+        id, user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
+<!--    List<DiscussPost> selectDiscussPosts(int userId,int offset,int limit);-->
+    <select id="selectDiscussPosts" resultType="DiscussPost">
+        select <include refid="selectFileds"></include>
+        from discuss_post
+        where status != 2
+        <if test="userId != 0">
+            and user_id = #{userId}
+        </if>
+        order by type desc,create_time desc
+        limit #{offset},#{limit}
+    </select>
+<!--    int selectDiscussPostRows(@Param("userId") int userId);-->
+    <select id="selectDiscussPostRows" resultType="int">
+        select count(id)
+        from discuss_post
+        where status != 2
+        <if test="userId != 0">
+            and user_id = #{userId}
+        </if>
+    </select>
+<!--    int insertDiscussPost(DiscussPost discussPost);-->
+    <insert id="insertDiscussPost" parameterType="discussPost" keyProperty="id">
+        insert into discuss_post(user_id,title,content,type,status,create_time,comment_count,score)
+        values(#{userId},#{title},#{content},#{type},#{status},#{createTime},#{commentCount},#{score})
+    </insert>
+<!--    DiscussPost selectDiscussPostById(int userId);-->
+    <select id="selectDiscussPostById" resultType="discussPost">
+        select <include refid="selectFileds"></include> from discuss_post where id = #{id}
+    </select>
+<!--    int updateDiscussPostRows(int id,int commentCount);-->
+    <update id="updateDiscussPostRows">
+        update discuss_post set comment_count = #{commentCount} where id = #{id}
+    </update>
+</mapper>
