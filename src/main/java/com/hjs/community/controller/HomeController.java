@@ -4,11 +4,14 @@ import com.hjs.community.entity.DiscussPost;
 import com.hjs.community.entity.Page;
 import com.hjs.community.entity.User;
 import com.hjs.community.service.DiscussPostService;
+import com.hjs.community.service.LikeService;
 import com.hjs.community.service.UserService;
+import com.hjs.community.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +26,9 @@ public class HomeController {
     private UserService userService;
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private LikeService likeService;
 
     @GetMapping("/index")
     public String getIndexPage(Model model, Page page){
@@ -39,6 +45,8 @@ public class HomeController {
                 map.put("post",dp);
                 User user = userService.findUserById(dp.getUserId());
                 map.put("user",user);
+                long likeCount = likeService.findEntityLikeCount(CommunityConstant.ENTITY_TYPE_POST, dp.getId());
+                map.put("likeCount",likeCount);
                 discussPosts.add(map);
             }
         }
@@ -46,6 +54,11 @@ public class HomeController {
 //        model.addAttribute("page",page);
         model.addAttribute("discussPosts",discussPosts);
         return "index";
+    }
+
+    @GetMapping("/error")
+    public String getErrorPage(){
+        return "/error/500";
     }
 
 

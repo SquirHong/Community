@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.naming.spi.DirectoryManager;
@@ -53,6 +54,9 @@ class CommunityApplicationTests {
 
     @Autowired
     private MessageMapper messageMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Test
     void testSelect() {
@@ -204,7 +208,14 @@ class CommunityApplicationTests {
         for (Message message : messageMapper.selectConversations(111, 0, 20)) {
             System.out.println(message);
         }
-
+    }
+    @Test
+    public void testredis(){
+        String key = "test";
+        redisTemplate.opsForValue().set(key,1);
+        System.out.println(redisTemplate.opsForValue().get(key));
+        System.out.println(redisTemplate.opsForValue().increment(key));
+        System.out.println(redisTemplate.opsForValue().increment(key));
     }
 
 }

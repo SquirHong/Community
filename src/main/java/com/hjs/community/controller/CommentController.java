@@ -29,7 +29,7 @@ public class CommentController {
 
     @LoginRequired
     @PostMapping("/add/{discussPostId}")
-    public String addComment(@PathVariable("discussPostId")int id, Comment comment){
+    public String addComment(@PathVariable("discussPostId") int id, Comment comment) {
         comment.setUserId(hostHolder.getUser().getId());
         comment.setStatus(0);
         comment.setCreateTime(new Date());

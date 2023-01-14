@@ -36,4 +36,6 @@ public interface MessageMapper {
     //修改私信的状态 (未读，已读，删除)
     int updateStatus(List<Integer> ids,int status);
 
+    //删除指定私信
+    int deleteLetter(int id);
 }

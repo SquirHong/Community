@@ -2,6 +2,7 @@ package com.hjs.community.controller;
 
 import com.hjs.community.annotation.LoginRequired;
 import com.hjs.community.entity.User;
+import com.hjs.community.service.LikeService;
 import com.hjs.community.service.UserService;
 import com.hjs.community.util.CommunityUtil;
 import com.hjs.community.util.HostHolder;
@@ -49,6 +50,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     public static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -121,6 +125,20 @@ public class UserController {
         // TODO: 2023/1/5 考虑这里要不要修改host holder值
 
         return "redirect:/logout";
+    }
+
+    //个人主页
+    @GetMapping("/profile/{id}")
+    public String getProfilePage(@PathVariable("id")int id,Model model){
+        User user = userService.findUserById(id);
+        if (user == null){
+            throw new IllegalArgumentException("该用户不存在");
+        }
+        //用户基本信息
+        model.addAttribute("user",user);
+        int likeCount = likeService.findUserLikeCount(id);
+        model.addAttribute("likeCount",likeCount);
+        return "/site/profile";
     }
 
 

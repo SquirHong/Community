@@ -87,4 +87,9 @@
             #{id}
         </foreach>
     </update>
+<!--    int deleteLetter(int id);-->
+    <update id="deleteLetter">
+        update message set status = 2 where id = #{id}
+    </update>
+
 </mapper>

@@ -104,7 +104,8 @@ public class MessageController {
         message.setStatus(0);
         message.setCreateTime(new Date());
         //小的id号在前
-        message.setConversationId(message.getFromId() > message.getToId() ? message.getToId()+"_"+message.getFromId() : message.getFromId()+"_"+message.getToId());
+        message.setConversationId(message.getFromId() > message.getToId()
+                ? message.getToId()+"_"+message.getFromId() : message.getFromId()+"_"+message.getToId());
         messageService.addMessage(message);
         return CommunityUtil.getJsonString(0);
     }
@@ -115,6 +116,13 @@ public class MessageController {
         int u1 = Integer.parseInt(s[0]);
         int u2 = Integer.parseInt(s[1]);
         return u1 == hostHolder.getUser().getId() ? userService.findUserById(u2) : userService.findUserById(u1);
+    }
+
+    @ResponseBody
+    @PostMapping("/letter/delete")
+    public String deleteLetter(int id){
+        return messageService.deleteLetter(id) == 1
+                ? CommunityUtil.getJsonString(0 ) : CommunityUtil.getJsonString(1,"删除私信错误");
     }
 
 }

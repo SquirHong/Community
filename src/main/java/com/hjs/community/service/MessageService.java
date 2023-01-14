@@ -55,4 +55,8 @@ public class MessageService {
         return messageMapper.updateStatus(ids,1);
     }
 
+    public int deleteLetter(int id){
+        return messageMapper.deleteLetter(id);
+    }
+
 }
