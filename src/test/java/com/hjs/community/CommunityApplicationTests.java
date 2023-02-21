@@ -9,21 +9,23 @@ import com.hjs.community.entity.DiscussPost;
 import com.hjs.community.entity.LoginTicket;
 import com.hjs.community.entity.Message;
 import com.hjs.community.entity.User;
-import com.hjs.community.util.CommunityConstant;
 import com.hjs.community.util.CommunityUtil;
 import com.hjs.community.util.MailClient;
 import com.hjs.community.util.SensitiveFilter;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
 
-import javax.naming.spi.DirectoryManager;
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -57,6 +59,9 @@ class CommunityApplicationTests {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private kafkaProducer kafkaProducer;
 
     @Test
     void testSelect() {
@@ -216,6 +221,37 @@ class CommunityApplicationTests {
         System.out.println(redisTemplate.opsForValue().get(key));
         System.out.println(redisTemplate.opsForValue().increment(key));
         System.out.println(redisTemplate.opsForValue().increment(key));
+    }
+
+    @Test
+    public void testKafka(){
+        kafkaProducer.sendMessage("test","你好");
+        kafkaProducer.sendMessage("test","在吗");
+        try {
+            Thread.sleep(1000*10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+@Component
+class kafkaProducer{
+
+    @Resource
+    private KafkaTemplate kafkaTemplate;
+
+    public void sendMessage(String topic,String content){
+        kafkaTemplate.send(topic,content);
+    }
+}
+
+@Component
+class kafkaConsumer{
+
+    @KafkaListener(topics = {"test"})
+    public void handleMessage(ConsumerRecord record){
+        System.out.println(record.value());
     }
 
 }

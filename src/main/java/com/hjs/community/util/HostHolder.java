@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 起一个容器的作用 持有用户信息
+ *
  * @author hong
  * @create 2023-01-04 18:21
  */
@@ -13,15 +14,15 @@ public class HostHolder {
 
     ThreadLocal<User> users = new ThreadLocal<>();
 
-    public void setUser(User user){
+    public void setUser(User user) {
         users.set(user);
     }
 
-    public User getUser(){
+    public User getUser() {
         return users.get();
     }
 
-    public void clear(){
+    public void clear() {
         users.remove();
     }
 

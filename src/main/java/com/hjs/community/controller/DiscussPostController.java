@@ -60,6 +60,7 @@ public class DiscussPostController {
     }
 
     //一般通过id查数据，请求路径最好带上id号
+    @LoginRequired
     @GetMapping("/detail/{discussPostId}")
     public String getDiscussPost(@PathVariable("discussPostId") int id, Model model, Page page) {
         //只要是实体类型并且在controller的参数上， springmvc调用完controller方法后，会自动将其add到model中

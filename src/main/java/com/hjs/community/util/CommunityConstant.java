@@ -1,14 +1,13 @@
 package com.hjs.community.util;
 
 import lombok.Getter;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author hong
  * @create 2023-01-01 20:27
  */
 @Getter
-public class CommunityConstant  {
+public class CommunityConstant {
 
     /**
      * 激活成功
@@ -44,5 +43,25 @@ public class CommunityConstant  {
      * 实体类型: 评论
      */
     public static final int ENTITY_TYPE_COMMENT = 2;
+
+    /**
+     * 实体类型: 人
+     */
+    public static final int ENTITY_TYPE_USER = 3;
+
+    /**
+     * 主题：评论
+     */
+    public static final String TOPIC_COMMENT = "comment";
+
+    /**
+     * 主题：点赞
+     */
+    public static final String TOPIC_LIKE = "like";
+
+    /**
+     * 主题：关注
+     */
+    public static final String TOPIC_FOLLOW = "follow";
 
 }

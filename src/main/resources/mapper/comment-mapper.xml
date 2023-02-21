@@ -5,15 +5,18 @@
 <mapper namespace="com.hjs.community.dao.CommentMapper">
 
     <sql id="selectFileds">
-        id,user_id,entity_type,entity_id,target_id,content,status,create_time
+        id
+        ,user_id,entity_type,entity_id,target_id,content,status,create_time
     </sql>
     <sql id="insertFileds">
-        user_id,entity_type,entity_id,target_id,content,status,create_time
+        user_id
+        ,entity_type,entity_id,target_id,content,status,create_time
     </sql>
 
-<!--    List<Comment> selectCommentByEntity(int entityType,int entityId,int offset,int limit);-->
+    <!--    List<Comment> selectCommentByEntity(int entityType,int entityId,int offset,int limit);-->
     <select id="selectCommentByEntity" resultType="Comment">
-        select <include refid="selectFileds"></include>
+        select
+        <include refid="selectFileds"></include>
         from comment
         where status = 0
         and entity_type = #{entityType}
@@ -21,18 +24,51 @@
         order by create_time
         limit #{offset},#{limit}
     </select>
-<!--    int selectCountByEntity(int entityType,int entityId);-->
+    <!--    int selectCountByEntity(int entityType,int entityId);-->
     <select id="selectCountByEntity" resultType="int">
-        select count(*) from comment
+        select count(*)
+        from comment
         where status = 0
-        and entity_type = #{entityType}
-        and entity_id = #{entityId}
+          and entity_type = #{entityType}
+          and entity_id = #{entityId}
     </select>
-<!--    int insertComment(Comment comment);-->
+    <!--    int insertComment(Comment comment);-->
     <insert id="insertComment" parameterType="Comment" keyProperty="id">
         insert into comment(<include refid="insertFileds"></include>)
         values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
     </insert>
-
+    <!--    Comment selectCommentById(int id);-->
+    <select id="selectCommentById" resultType="Comment">
+        select
+        <include refid="selectFileds"></include>
+        from comment
+        where id = #{id}
+    </select>
+    <!--    List<Comment> selectCommentsByUser(int userId, int offset, int limit);-->
+    <select id="selectCommentsByUser" resultType="Comment">
+        select
+        <include refid="selectFileds"></include>
+        from comment
+        where status != 1
+        and user_id = #{userId}
+        and entity_type = 1
+        and exists (
+        select id from discuss_post where id = comment.entity_id and status != 2
+        )
+        order by create_time desc
+        limit #{offset}, #{limit}
+    </select>
+    <!--    int selectCountByUser(int userId);-->
+    <select id="selectCountByUser" resultType="int">
+        select count(id)
+        from comment
+        where status != 1
+        and user_id = #{userId}
+          and entity_type = 1
+          and exists (
+            select id from discuss_post where id = comment.entity_id
+          and status != 2
+            )
+    </select>
 
 </mapper>

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
  * @create 2023-01-02 17:07
  */
 @Repository
+@Deprecated
 public interface LoginTicketMapper {
 
     @Insert({

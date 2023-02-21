@@ -1,7 +1,6 @@
 package com.hjs.community.dao;
 
 import com.hjs.community.entity.DiscussPost;
-import com.hjs.community.entity.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

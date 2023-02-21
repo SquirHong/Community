@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,33 +30,33 @@ public class HomeController {
     private LikeService likeService;
 
     @GetMapping("/index")
-    public String getIndexPage(Model model, Page page){
-        Integer [] myArray = { 1, 2, 3 };
+    public String getIndexPage(Model model, Page page) {
+        Integer[] myArray = {1, 2, 3};
         List<Integer> collect = Arrays.stream(myArray).collect(Collectors.toList());
 
         page.setRows(discussPostService.findDiscussPostRows(0));
         page.setPath("/index");
         List<DiscussPost> list = discussPostService.findDiscussPosts(0, page.getOffset(), page.getLimit());
-        List<Map<String,Object>> discussPosts = new LinkedList<>();
-        if (list != null){
-            for (DiscussPost dp : list){
-                Map<String,Object> map = new HashMap<>();
-                map.put("post",dp);
+        List<Map<String, Object>> discussPosts = new LinkedList<>();
+        if (list != null) {
+            for (DiscussPost dp : list) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("post", dp);
                 User user = userService.findUserById(dp.getUserId());
-                map.put("user",user);
+                map.put("user", user);
                 long likeCount = likeService.findEntityLikeCount(CommunityConstant.ENTITY_TYPE_POST, dp.getId());
-                map.put("likeCount",likeCount);
+                map.put("likeCount", likeCount);
                 discussPosts.add(map);
             }
         }
         //可以省略这一步
 //        model.addAttribute("page",page);
-        model.addAttribute("discussPosts",discussPosts);
+        model.addAttribute("discussPosts", discussPosts);
         return "index";
     }
 
     @GetMapping("/error")
-    public String getErrorPage(){
+    public String getErrorPage() {
         return "/error/500";
     }
 

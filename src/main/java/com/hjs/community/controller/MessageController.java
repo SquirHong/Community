@@ -10,8 +10,10 @@ import com.hjs.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.events.Event;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -32,70 +34,70 @@ public class MessageController {
     private UserService userService;
 
     @GetMapping("/letter/list")
-    public String getLetterList(Model model, Page page){
+    public String getLetterList(Model model, Page page) {
         User user = hostHolder.getUser();
         page.setLimit(5);
         page.setPath("/letter/list");
         page.setRows(messageService.findConversationCount(user.getId()));
 
         List<Message> conversations = messageService.findConversations(user.getId(), page.getOffset(), page.getLimit());
-        List<Map<String,Object>> conversationList = null;
+        List<Map<String, Object>> conversationList = null;
 
-        if (conversations != null){
+        if (conversations != null) {
             conversationList = new ArrayList<>();
-            for (Message message : conversations){
-                Map<String,Object> map = new HashMap<>();
-                map.put("conversation",message);
-                map.put("letterCount",messageService.findLetterCount(message.getConversationId()));
-                map.put("unReadCount",messageService.findUnreadLetterCount(user.getId(), message.getConversationId()));
+            for (Message message : conversations) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("conversation", message);
+                map.put("letterCount", messageService.findLetterCount(message.getConversationId()));
+                map.put("unReadCount", messageService.findUnreadLetterCount(user.getId(), message.getConversationId()));
                 //这里是为了显示头像
                 int targetId = user.getId() == message.getFromId() ? message.getToId() : message.getFromId();
-                map.put("target",userService.findUserById(targetId));
+                map.put("target", userService.findUserById(targetId));
                 conversationList.add(map);
             }
         }
 
-        model.addAttribute("conversations",conversationList);
-        model.addAttribute("conversationsUnreadCount",messageService.findUnreadLetterCount(user.getId(),null));
+        model.addAttribute("conversations", conversationList);
+        model.addAttribute("conversationsUnreadCount", messageService.findUnreadLetterCount(user.getId(), null));
         return "/site/letter";
     }
 
     @GetMapping("/letter/detail/{conversationId}")
-    public String getLetterDetail(@PathVariable("conversationId")String conversationId,Page page,Model model){
+    public String getLetterDetail(@PathVariable("conversationId") String conversationId, Page page, Model model) {
         page.setLimit(5);
-        page.setPath("/letter/detail/"+conversationId);
+        page.setPath("/letter/detail/" + conversationId);
         page.setRows(messageService.findLetterCount(conversationId));
         List<Message> letterList = messageService.findLetters(conversationId, page.getOffset(), page.getLimit());
         //显示 from_id 数据
         // TODO: 2023/1/10 做个冗余类 带上target用户的name和头像
-        List<Map<String,Object>> letters = new ArrayList<>();
+        List<Map<String, Object>> letters = new ArrayList<>();
         List<Integer> ids = new ArrayList<>();
-        if (letterList != null){
-            for (Message message : letterList){
-                Map<String,Object> map = new HashMap<>();
-                map.put("letter",message);
-                map.put("fromUser",userService.findUserById(message.getFromId()));
+        if (letterList != null) {
+            for (Message message : letterList) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("letter", message);
+                map.put("fromUser", userService.findUserById(message.getFromId()));
                 letters.add(map);
-                if (message.getToId() == hostHolder.getUser().getId() && message.getStatus() == 0){
+                if (message.getToId() == hostHolder.getUser().getId() && message.getStatus() == 0) {
                     ids.add(message.getId());
                 }
             }
         }
         //处理未读信息 未读-> 已读
-        if (!ids.isEmpty()){
+        if (!ids.isEmpty()) {
             messageService.readMessage(ids);
         }
-        model.addAttribute("letters",letters);
-        model.addAttribute("target",getLetterTarget(conversationId));
+        model.addAttribute("letters", letters);
+        model.addAttribute("target", getLetterTarget(conversationId));
         return "/site/letter-detail";
     }
 
     @ResponseBody
     @PostMapping("/letter/send")
-    public String sendLetter(String toName,String content){
+    public String sendLetter(String toName, String content) {
         User target = userService.getUserByName(toName);
-        if (target == null){
-            return CommunityUtil.getJsonString(1,"目标用户不存在");
+        if (target == null) {
+            return CommunityUtil.getJsonString(1, "目标用户不存在");
         }
         Message message = new Message();
         message.setFromId(hostHolder.getUser().getId());
@@ -105,13 +107,13 @@ public class MessageController {
         message.setCreateTime(new Date());
         //小的id号在前
         message.setConversationId(message.getFromId() > message.getToId()
-                ? message.getToId()+"_"+message.getFromId() : message.getFromId()+"_"+message.getToId());
+                ? message.getToId() + "_" + message.getFromId() : message.getFromId() + "_" + message.getToId());
         messageService.addMessage(message);
         return CommunityUtil.getJsonString(0);
     }
 
 
-    private User getLetterTarget(String conversationId){
+    private User getLetterTarget(String conversationId) {
         String[] s = conversationId.split("_");
         int u1 = Integer.parseInt(s[0]);
         int u2 = Integer.parseInt(s[1]);
@@ -120,9 +122,9 @@ public class MessageController {
 
     @ResponseBody
     @PostMapping("/letter/delete")
-    public String deleteLetter(int id){
+    public String deleteLetter(int id) {
         return messageService.deleteLetter(id) == 1
-                ? CommunityUtil.getJsonString(0 ) : CommunityUtil.getJsonString(1,"删除私信错误");
+                ? CommunityUtil.getJsonString(0) : CommunityUtil.getJsonString(1, "删除私信错误");
     }
 
 }

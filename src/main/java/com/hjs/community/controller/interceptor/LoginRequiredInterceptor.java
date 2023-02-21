@@ -22,6 +22,14 @@ public class LoginRequiredInterceptor implements HandlerInterceptor {
     @Autowired
     private HostHolder hostHolder;
 
+    /**
+     * 当未登录并且将要访问 需登录才能请求 时，跳转回到登录页面
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // TODO: 2023/1/6 考虑 拦截器已在webMvcConfig里进行了配置  而在配置中 已将 所有静态资源默认放行，这里是否不用判断是否目标对象是否是一个方法

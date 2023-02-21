@@ -28,13 +28,12 @@ public class MailClient {
     private String from;
 
     /**
-     *
-     * @param to 收件人
+     * @param to      收件人
      * @param subject 邮件主题
      * @param content 邮件内容
      */
     @Async
-    public void sendMail(String to,String subject,String content){
+    public void sendMail(String to, String subject, String content) {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -43,10 +42,10 @@ public class MailClient {
             helper.setTo(to);
             helper.setSubject(subject);
             // true 表示支持html文本
-            helper.setText(content,true);
+            helper.setText(content, true);
             mailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
-            logger.error("发送邮件失败"+e.getMessage());
+            logger.error("发送邮件失败" + e.getMessage());
         }
 
     }
