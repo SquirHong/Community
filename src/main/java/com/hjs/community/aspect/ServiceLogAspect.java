@@ -35,7 +35,7 @@ public class ServiceLogAspect {
     public void before(JoinPoint joinPoint) {
         // 用户[ip],在[now],访问了[com.nowcoder.community.service.xxx()].
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        //这里因为  kafka的consumer
+        //这里因为  kafka的consumer 消费信息 会调用 messageService的添加message方法，此请求是由 kafka内部调用，所以并不包含request
         if (attributes == null) {
             return;
         }

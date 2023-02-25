@@ -65,6 +65,7 @@ public class SensitiveFilter {
      * @return 过滤后的文本
      */
     public String filter(String text){
+
         if (StringUtils.isBlank(text)){
             return null;
         }
@@ -72,7 +73,7 @@ public class SensitiveFilter {
         TrieNode tmp = root;
         int begin = 0;
         int end = 0;
-        while (begin < text.length()){
+        while (begin < text.length() && end < text.length()){
             char c = text.charAt(end);
             //跳过字符
             if (issymbol(c)){

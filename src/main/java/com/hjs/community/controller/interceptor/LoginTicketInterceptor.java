@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 /**
  * @author hong
@@ -33,7 +32,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         String ticket = CookieUtil.getCookie(request, "ticket");
         if (ticket != null){
             LoginTicket loginTicket = userService.getLoginTicket(ticket);
-            // TODO: 2023/1/4 这里需要了解一下 浏览器是怎么处理过期的cookie的  && loginTicket.getExpired().after(new Date())
             if (loginTicket != null && loginTicket.getStatus() == 0 ){
                 User user = userService.findUserById(loginTicket.getUserId());
                 hostHolder.setUser(user);
@@ -51,7 +49,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
         }
     }
 
-    //在渲染页面之前执行
+    //在渲染页面之后执行
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clear();

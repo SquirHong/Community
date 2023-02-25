@@ -38,4 +38,20 @@ public interface MessageMapper {
 
     //删除指定私信
     int deleteLetter(int id);
+
+    //查找关于某人的最新的一条通知消息
+    Message selectLatestNotice(int userId, String topic);
+
+    //查找某人的所有通知消息
+    int selectNoticeCount(int userId, String topic);
+
+    int selectNoticeUnreadCount(int userId, String topic);
+
+    //topic可以为空
+    int selectNoticeUnreadCountIf(int userId);
+
+    //查询某个通知主题所包含的所有消息
+    List<Message> selectNotices(int userId, String topic, int offset, int limit);
+
+
 }

@@ -59,4 +59,40 @@ public class MessageService {
         return messageMapper.deleteLetter(id);
     }
 
+    /**
+     * 查找通知某人最新的一条消息关于 topic的消息
+     * @param userId
+     * @param topic
+     * @return
+     */
+    public Message findLatestNotice(int userId, String topic) {
+        return messageMapper.selectLatestNotice(userId,topic);
+    }
+
+    /**
+     * 查找通知某人的所有关于 topic的消息
+     * @param userId
+     * @param topic
+     * @return
+     */
+    public int findNoticeCount(int userId,String topic){
+        return messageMapper.selectNoticeCount(userId,topic);
+    }
+
+    public int findNoticeUnreadCount(int userId, String topic){
+        return messageMapper.selectNoticeUnreadCount(userId, topic);
+    }
+
+    public List<Message> findNotices(int userId,String topic,int offset,int limit){
+        return messageMapper.selectNotices(userId,topic,offset,limit);
+    }
+
+    /**
+     * 查询用户收到的所有的通知消息
+     * @param userId
+     * @return
+     */
+    public int findNoticeUnreadCountIf(int userId){
+        return messageMapper.selectNoticeUnreadCountIf(userId);
+    }
 }
